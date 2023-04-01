@@ -26,15 +26,8 @@ jobs:
     needs: build-check
     runs-on: ubuntu-22.04
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          ref: member-dev
+#       - name: Checkout
+#         uses: actions/checkout@v3
       - name: Do Pull Request
-        uses: peter-evans/create-pull-request@v4
-        with:
-          base: dev
-          token: ${{ secrets.PAT }}
-          branch: wait-pr
-          draft: true
+        run: gh pr create -B dev -H member-dev --title 'Merge member-dev into base_branch' --body 'Created by Github action'
           
