@@ -31,7 +31,7 @@ jobs:
         with:
           ref: member-dev
       - name: Do Pull Request
-        uses: repo-sync/pull-request@v2
+        uses: repo-sync/pull-request@v2.12.1
         with:
           destination_branch: "dev"
           pr_title: "Pull ${{ github.ref }} into dev"
