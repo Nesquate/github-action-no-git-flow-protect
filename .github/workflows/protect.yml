@@ -37,3 +37,4 @@ jobs:
           pr_title: "Pull ${{ github.ref }} into dev"
           pr_label: "auto-pr"
           pr_draft: true 
+          github_token: ${{ secrets.GITHUB_TOKEN }} 
