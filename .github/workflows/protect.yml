@@ -1,0 +1,35 @@
+name: 'member-dev branch check & auto-pr'
+on:
+  push:
+    branches:
+      - member-dev
+
+jobs:
+  build-check:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: member-dev
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+      - name: Run test
+        run: './gradlew test'
+  auto-pr:
+    name: Auto doing pull request
+    needs: build-check
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Do Pull Request
+        uses: repo-sync/pull-request@v2
+        with:
+          destination_branch: "dev"
+          pr_title: "Pull ${{ github.ref }} into dev"
+          pr_label: "auto-pr"
+          pr_draft: true 
