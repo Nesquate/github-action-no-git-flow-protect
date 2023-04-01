@@ -28,7 +28,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          ref: member-dev
+      - name: Get latest commit short SHA # https://stackoverflow.com/questions/59810838/how-to-get-the-short-sha-for-the-github-workflow
+        id: getshort
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - name: Create PR branch
+        run: git branch pr-${{steps.getshort.outputs.sha_short}}
       - name: Do Pull Request
-        run: gh pr create -B dev -H member-dev --fill
+        run: gh pr create -B dev -H pr-${{steps.getshort.outputs.sha_short}} --fill
         env:
           GH_TOKEN: ${{ github.token }}
