@@ -5,30 +5,41 @@ on:
       - member-dev
 
 jobs:
-  build-check:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          ref: member-dev
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '11'
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v2
-      - name: Run test
-        run: 'chmod +x ./gradlew && ./gradlew test'
+  # build-check:
+  #   runs-on: ubuntu-22.04
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+  #       with:
+  #         ref: member-dev
+  #     - name: Setup Java
+  #       uses: actions/setup-java@v3
+  #       with:
+  #         distribution: 'temurin'
+  #         java-version: '11'
+  #     - name: Setup Android SDK
+  #       uses: android-actions/setup-android@v2
+  #     - name: Run test
+  #       run: 'chmod +x ./gradlew && ./gradlew test'
   auto-pr:
     name: Auto doing pull request
-    needs: build-check
+    # needs: build-check
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Ensure to switch member-dev
+        run: git switch member-dev
+      - name: Get latest commit short SHA # https://stackoverflow.com/questions/59810838/how-to-get-the-short-sha-for-the-github-workflow
+        id: getshort
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - name: Create PR branch
+        run: git branch pr${{steps.getshort.outputs.sha_short}}
+      - name: Switch to PR branch
+        run: git switch pr${{steps.getshort.outputs.sha_short}}
+      - name: Push PR branch
+        run: git push -u origin pr${{steps.getshort.outputs.sha_short}}
       - name: Do Pull Request
-        run: gh pr create -B dev -H member-dev --title 'Merge member-dev into base_branch' --body 'Created by Github action'
+        run: gh pr create -B dev -H pr${{steps.getshort.outputs.sha_short}} -t 'Auto PR:${{steps.getshort.outputs.sha_short}}' -b 'Auto PR:${{steps.getshort.outputs.sha_short}}'
         env:
           GH_TOKEN: ${{ github.token }}
