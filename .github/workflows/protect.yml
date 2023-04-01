@@ -20,16 +20,15 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
       - name: Run test
-        run: './gradlew test'
+        run: 'chmod +x ./gradlew && ./gradlew test'
   auto-pr:
     name: Auto doing pull request
     needs: build-check
     runs-on: ubuntu-22.04
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
       - name: Do Pull Request
-        uses: repo-sync/pull-request@v2
-        with:
-          destination_branch: "dev"
-          pr_title: "Pull ${{ github.ref }} into dev"
-          pr_label: "auto-pr"
-          pr_draft: true 
+        run: gh pr create -B dev -H member-dev --title 'Merge member-dev into base_branch' --body 'Created by Github action'
+        env:
+          GH_TOKEN: ${{ github.token }}
