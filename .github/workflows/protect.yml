@@ -5,25 +5,37 @@ on:
       - member-dev
 
 jobs:
-  # build-check:
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
-  #       with:
-  #         ref: member-dev
-  #     - name: Setup Java
-  #       uses: actions/setup-java@v3
-  #       with:
-  #         distribution: 'temurin'
-  #         java-version: '11'
-  #     - name: Setup Android SDK
-  #       uses: android-actions/setup-android@v2
-  #     - name: Run test
-  #       run: 'chmod +x ./gradlew && ./gradlew test'
+  build-check:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: member-dev
+      - name: Setup git user
+        uses: fregante/setup-git-user@v2
+      - name: Ensure to switch member-dev
+        run: git switch member-dev
+      - name: Get latest commit short SHA # https://stackoverflow.com/questions/59810838/how-to-get-the-short-sha-for-the-github-workflow
+        id: getshort
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - name: Switch to dev
+        run: git switch dev
+      - name: Cherry-pick
+        run: git cherry-pick ${{steps.getshort.outputs.sha_short}}
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+      - name: Run test
+        run: 'chmod +x ./gradlew && ./gradlew test'
   auto-pr:
     name: Auto doing pull request
-    # needs: build-check
+    needs: build-check
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
