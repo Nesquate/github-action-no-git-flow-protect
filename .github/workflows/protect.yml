@@ -31,10 +31,4 @@ jobs:
         with:
           ref: member-dev
       - name: Do Pull Request
-        uses: repo-sync/pull-request@v2.12.1
-        with:
-          destination_branch: "dev"
-          pr_title: "Pull ${{ github.ref }} into dev"
-          pr_label: "auto-pr"
-          pr_draft: true 
-          github_token: ${{ secrets.GITHUB_TOKEN }} 
+        uses: peter-evans/create-pull-request@v4
