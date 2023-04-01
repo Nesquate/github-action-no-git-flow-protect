@@ -33,6 +33,8 @@ jobs:
       - name: Do Pull Request
         uses: peter-evans/create-pull-request@v4
         with:
+          base: dev
           token: ${{ secrets.PAT }}
           branch: wait-pr
           draft: true
+          
