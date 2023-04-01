@@ -39,6 +39,10 @@ jobs:
         run: git switch pr/${{steps.getshort.outputs.sha_short}}
       - name: Push PR branch
         run: git push -u origin pr/${{steps.getshort.outputs.sha_short}}
+      - name: Re-Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: pr/${{steps.getshort.outputs.sha_short}}
       - name: Do Pull Request
         run: gh pr create -B dev -H pr/${{steps.getshort.outputs.sha_short}} --fill
         env:
