@@ -29,6 +29,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Do Pull Request
-        run: gh pr create -B dev -H member-dev --title 'Merge member-dev into base_branch' --body 'Created by Github action'
+        run: gh pr create -B dev -H member-dev --fill
         env:
           GH_TOKEN: ${{ github.token }}
