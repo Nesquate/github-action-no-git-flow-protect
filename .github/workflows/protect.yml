@@ -35,6 +35,10 @@ jobs:
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - name: Create PR branch
         run: git branch pr/${{steps.getshort.outputs.sha_short}}
+      - name: Switch to PR branch
+        run: git switch pr/${{steps.getshort.outputs.sha_short}}
+      - name: Push PR branch
+        run: git push
       - name: Do Pull Request
         run: gh pr create -B dev -H pr/${{steps.getshort.outputs.sha_short}} --fill
         env:
