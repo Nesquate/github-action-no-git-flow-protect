@@ -20,7 +20,7 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
       - name: Run test
-        run: './gradlew test'
+        run: 'chmod +x ./gradlew && ./gradlew test'
   auto-pr:
     name: Auto doing pull request
     needs: build-check
